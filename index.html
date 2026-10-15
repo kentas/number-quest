@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ナンバークエスト</title>
+
+<style>
+:root{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --text:#f8fafc;
+  --green:#22c55e;
+  --orange:#f97316;
+  --line:#334155;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:sans-serif;
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:20px;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#94a3b8;
+  margin-bottom:20px;
+}
+
+.target{
+  text-align:center;
+  font-size:5rem;
+  font-weight:bold;
+  margin:25px 0;
+}
+
+.progress{
+  text-align:center;
+  color:#cbd5e1;
+  margin-bottom:15px;
+}
+
+button{
+  width:100%;
+  border:none;
+  border-radius:16px;
+  padding:22px;
+  font-size:1.4rem;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+  margin-bottom:12px;
+}
+
+.found{
+  background:var(--green);
+}
+
+.undo{
+  background:var(--orange);
+}
+
+button:active{
+  transform:scale(0.98);
+}
+
+.history-item{
+  border-bottom:1px solid var(--line);
+  padding:12px 0;
+}
+
+.history-number{
+  font-weight:bold;
+  font-size:1.1rem;
+}
+
+.footer{
+  text-align:center;
+  color:#64748b;
+  font-size:.9rem;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>🚗 ナンバークエスト</h1>
+  <div class="subtitle">犬の散歩でナンバー探索</div>
+
+  <div class="card">
+
+    <div class="target" id="target"></div>
+
+    <div class="progress" id="progress"></div>
+
+    <button class="found" onclick="foundNumber()">
+      ✅ 発見した！
+    </button>
+
+    <button class="undo" onclick="undoLast()">
+      ↩️ 間違えた！
+    </button>
+
+  </div>
+
+  <div class="card">
+    <h2>発見履歴</h2>
+    <div id="history"></div>
+  </div>
+
+  <div class="footer">
+    ブラウザ内に自動保存されます
+  </div>
+
+</div>
+
+<script>
+
+const STORAGE_KEY = "numberQuestData";
+
+let data =
+  JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+if(!data){
+  data = {
+    current:49,
+    history:[]
+  };
+  save();
+}
+
+function save(){
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+}
+
+function formatTarget(n){
+
+  if(n < 10){
+    return "*" + n;
+  }
+
+  if(n < 100){
+    return "*" + n;
+  }
+
+  if(n < 1000){
+    return "*" + n;
+  }
+
+  return String(n);
+}
+
+function formatDate(d){
+
+  return new Date(d)
+    .toLocaleDateString(
+      "ja-JP",
+      {
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit"
+      }
+    );
+}
+
+function render(){
+
+  document.getElementById("target").textContent =
+    formatTarget(data.current);
+
+  document.getElementById("progress").textContent =
+    data.current + " / 9999";
+
+  const history =
+    document.getElementById("history");
+
+  history.innerHTML = "";
+
+  [...data.history]
+    .reverse()
+    .forEach(item => {
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "history-item";
+
+      div.innerHTML =
+        `
+        <div class="history-number">
+          ${item.number}
+        </div>
+        <div>
+          ${formatDate(item.date)}
+        </div>
+        `;
+
+      history.appendChild(div);
+    });
+
+}
+
+function foundNumber(){
+
+  data.history.push({
+    number:data.current,
+    date:new Date().toISOString()
+  });
+
+  data.current++;
+
+  save();
+  render();
+}
+
+function undoLast(){
+
+  if(data.history.length === 0){
+    return;
+  }
+
+  const last =
+    data.history.pop();
+
+  data.current =
+    last.number;
+
+  save();
+  render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
