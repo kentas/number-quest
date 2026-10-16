@@ -109,10 +109,15 @@ button:active{
 
 input{
   width:100%;
-  padding:12px;
-  border-radius:10px;
+  padding:14px;
   border:none;
+  border-radius:10px;
   font-size:1rem;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
 }
 </style>
 </head>
@@ -140,27 +145,23 @@ input{
     </button>
 
   </div>
+
   <div class="card">
-    <h2>⚙️ 設定</h2>
+    <h2>⚙️ 初期データ設定</h2>
 
-    <label>現在の番号</label>
-    <input id="currentInput" type="number" min="1" max="9999">
-
-    <br><br>
-
-    <label>探索開始日</label>
-    <input id="startDateInput" type="date">
+    <label>最後に見つけた番号</label>
+    <input id="seedNumber" type="number" min="1" max="9999">
 
     <br><br>
 
-    <button onclick="saveSettings()">
-      💾 設定を保存
+    <label>発見日</label>
+    <input id="seedDate" type="date">
+
+    <br><br>
+
+    <button onclick="createSeedData()">
+      初期データ作成
     </button>
-  </div>
-
-  <div class="card">
-    <h2>発見履歴</h2>
-    <div id="history"></div>
   </div>
 
   <div class="footer">
@@ -223,27 +224,41 @@ function formatDate(d){
 }
 
 function render(){
-  const start =
-    new Date(data.targetStartDate);
-
-  const now =
-    new Date();
-
-  const days =
-    Math.floor(
-      (now - start) /
-      (1000 * 60 * 60 * 24)
-    );
-
-  document.getElementById("elapsed")
-    .textContent =
-    `探索開始から ${days} 日`;
 
   document.getElementById("target").textContent =
     formatTarget(data.current);
 
   document.getElementById("progress").textContent =
     data.current + " / 9999";
+
+  if(data.history.length > 0){
+
+    const last =
+      data.history[data.history.length - 1];
+
+    const start =
+      new Date(last.date);
+
+    const today =
+      new Date();
+
+    const days =
+      Math.floor(
+        (today - start) /
+        (1000 * 60 * 60 * 24)
+      );
+
+    document.getElementById("elapsed")
+      .textContent =
+      `探索 ${days} 日目`;
+
+  } else {
+
+    document.getElementById("elapsed")
+      .textContent =
+      "";
+
+  }
 
   const history =
     document.getElementById("history");
@@ -271,17 +286,8 @@ function render(){
         `;
 
       history.appendChild(div);
+
     });
-
-  document.getElementById(
-    "currentInput"
-  ).value = data.current;
-
-  document.getElementById(
-    "startDateInput"
-  ).value =
-    data.targetStartDate
-      .substring(0,10);
 
 }
 
@@ -317,21 +323,38 @@ function undoLast(){
   render();
 }
 
-function saveSettings(){
+function createSeedData() {
 
-  data.current = Number(
-    document.getElementById(
-      "currentInput"
-    ).value
-  );
+  const number =
+    Number(
+      document.getElementById("seedNumber").value
+    );
 
-  data.targetStartDate =
-    document.getElementById(
-      "startDateInput"
-    ).value;
+  const date =
+    document.getElementById("seedDate").value;
+
+  if(!number || !date){
+    alert("番号と日付を入力してください");
+    return;
+  }
+
+  if(!confirm("現在の履歴を上書きしますか？")){
+    return;
+  }
+
+  data.current = number + 1;
+
+  data.history = [
+    {
+      number: number,
+      date: new Date(date).toISOString()
+    }
+  ];
 
   save();
   render();
+
+  alert("初期データを設定しました");
 }
 
 render();
