@@ -1,402 +1,459 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-<title>ナンバークエスト</title>
+    <title>ナンバークエスト</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
+    <link href="manifest.json" rel="manifest">
+    <meta content="#0f172a" name="theme-color">
 
-<style>
-:root{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --text:#f8fafc;
-  --green:#22c55e;
-  --orange:#f97316;
-  --line:#334155;
-}
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --green: #22c55e;
+            --orange: #f97316;
+            --line: #334155;
+        }
 
-*{
-  box-sizing:border-box;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:sans-serif;
-}
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: sans-serif;
+        }
 
-.container{
-  max-width:700px;
-  margin:auto;
-  padding:20px;
-}
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+        }
 
-.card{
-  background:var(--card);
-  border-radius:20px;
-  padding:24px;
-  margin-bottom:20px;
-}
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
 
-h1{
-  text-align:center;
-  margin-bottom:10px;
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
 
-.subtitle{
-  text-align:center;
-  color:#94a3b8;
-  margin-bottom:20px;
-}
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
 
-.progress{
-  text-align:center;
-  color:#cbd5e1;
-  margin-bottom:15px;
-}
+        .progress {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
 
-button{
-  width:100%;
-  border:none;
-  border-radius:16px;
-  padding:22px;
-  font-size:1.4rem;
-  font-weight:bold;
-  color:white;
-  cursor:pointer;
-  margin-bottom:12px;
-}
+        #elapsed {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #facc15;
+        }
 
-.found{
-  background:var(--green);
-}
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            padding: 22px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
 
-.undo{
-  background:var(--orange);
-}
+        .found {
+            background: var(--green);
+        }
 
-button:active{
-  transform:scale(0.98);
-}
+        .undo {
+            background: var(--orange);
+        }
 
-.history-item{
-  border-bottom:1px solid var(--line);
-  padding:12px 0;
-}
+        button:active {
+            transform: scale(0.98);
+        }
 
-.history-number{
-  font-weight:bold;
-  font-size:1.1rem;
-}
+        .history-item {
+            border-bottom: 1px solid var(--line);
+            padding: 12px 0;
+        }
 
-.footer{
-  text-align:center;
-  color:#64748b;
-  font-size:.9rem;
-}
+        .history-number {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
 
-input{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  font-size:1rem;
-}
+        .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: .9rem;
+        }
 
-label{
-  display:block;
-  margin-bottom:8px;
-}
+        input {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
 
-.plate {
-  background: #ffffff;
-  color: #000000;
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
 
-  width: 380px;
-  margin: 20px auto;
-  padding: 16px;
+        .plate {
+            background: #ffffff;
+            color: #000000;
 
-  border: 4px solid #222;
-  border-radius: 12px;
+            width: 380px;
+            margin: 20px auto;
+            padding: 16px;
 
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.4);
-}
+            border: 1px solid #333;
+            border-radius: 12px;
 
-.plate-top {
-  color: #0a7a2f;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
 
-.plate-middle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-}
+        .plate-top {
+            color: #0a7a2f;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
 
-.hiragana {
-  color: #0a7a2f;
-  font-size: 2.2rem;
-  font-weight: bold;
-}
+        .plate-middle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
 
-.target {
-  color: #0a7a2f;
-  text-align: center;
-  font-family: monospace;
-  font-size: 5rem;
-  font-weight: 900;
-  letter-spacing: 0.3em;
-  margin: 25px 0;
-}
+        .hiragana {
+            color: #0a7a2f;
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
 
-</style>
+        .target {
+            color: #0a7a2f;
+            text-align: center;
+            font-family: monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            margin: 25px 0;
+        }
+
+        .history-number{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            font-weight:bold;
+            font-size:1.1rem;
+        }
+
+        .history-number span{
+            font-size:0.9rem;
+            color:#cbd5e1;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
 
-  <h1>🚗 ナンバークエスト</h1>
-  <div class="subtitle">犬の散歩でナンバー探索</div>
+    <h1>🚗 ナンバークエスト</h1>
+    <div class="subtitle">犬の散歩でナンバー探索</div>
 
-  <div class="card">
-    <div class="plate">
+    <div class="card">
+        <div class="plate">
 
-      <div class="plate-top">
-        名古屋 300
-      </div>
+            <div class="plate-top">
+                名古屋 300
+            </div>
 
-      <div class="plate-middle">
-        <span class="hiragana">あ</span>
-        <span id="target" class="target"></span>
-      </div>
+            <div class="plate-middle">
+                <span class="hiragana">あ</span>
+                <span class="target" id="target"></span>
+            </div>
+        </div>
     </div>
-  </div>
 
 
-  <div class="card">
+    <div class="card">
 
-    <div class="progress" id="progress"></div>
-    
-    <div class="progress" id="elapsed"></div>
+        <div class="progress" id="progress"></div>
 
-    <button class="found" onclick="foundNumber()">
-      ✅ 発見した！
-    </button>
+        <div class="progress" id="elapsed"></div>
 
-    <button class="undo" onclick="undoLast()">
-      ↩️ 間違えた！
-    </button>
+        <button class="found" onclick="foundNumber()">
+            ✅ 発見した！
+        </button>
 
-  </div>
+        <button class="undo" onclick="undoLast()">
+            ↩️ 間違えた！
+        </button>
 
-  <div class="card">
-    <h2>発見履歴</h2>
-    <div id="history"></div>
-  </div>
-  
-  <div class="card">
-    <h2>⚙️ 初期データ設定</h2>
+    </div>
 
-    <label>最後に見つけた番号</label>
-    <input id="seedNumber" type="number" min="1" max="9999">
+    <div class="card">
+        <h2>発見履歴</h2>
+        <div id="history"></div>
+    </div>
 
-    <br><br>
+    <div class="card">
+        <h2>⚙️ 初期データ設定</h2>
 
-    <label>発見日</label>
-    <input id="seedDate" type="date">
+        <label>最後に見つけた番号</label>
+        <input id="seedNumber" max="9999" min="1" type="number">
 
-    <br><br>
+        <br><br>
 
-    <button onclick="createSeedData()">
-      初期データ作成
-    </button>
-  </div>
+        <label>発見日</label>
+        <input id="seedDate" type="date">
 
-  <div class="footer">
-    ブラウザ内に自動保存されます
-  </div>
+        <br><br>
+
+        <button onclick="createSeedData()">
+            初期データ作成
+        </button>
+    </div>
+
+    <div class="footer">
+        ブラウザ内に自動保存されます
+    </div>
 
 </div>
 
 <script>
 
-const STORAGE_KEY = "numberQuestData";
+    const STORAGE_KEY = "numberQuestData";
 
-let data =
-  JSON.parse(localStorage.getItem(STORAGE_KEY));
+    let data =
+        JSON.parse(localStorage.getItem(STORAGE_KEY));
 
-if(!data){
-  data = {
-    current:49,
-    targetStartDate:new Date().toISOString(),
-    history:[]
-  };
-  save();
-}
-
-function save(){
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(data)
-  );
-}
-
-function formatTarget(n){
-  return String(n).padStart(4, "*");
-}
-
-function render(){
-
-  document.getElementById("target").textContent =
-    formatTarget(data.current);
-
-  document.getElementById("progress").textContent =
-    data.current + " / 9999";
-
-  if(data.history.length > 0){
-
-    const last =
-      data.history[data.history.length - 1];
-
-    const start =
-      new Date(last.date);
-
-    const today =
-      new Date();
-
-    const days =
-      Math.floor(
-        (today - start) /
-        (1000 * 60 * 60 * 24)
-      );
-
-    document.getElementById("elapsed")
-      .textContent =
-      `探索 ${days} 日目`;
-
-  } else {
-
-    document.getElementById("elapsed")
-      .textContent =
-      "";
-
-  }
-
-  const history =
-    document.getElementById("history");
-
-  history.innerHTML = "";
-
-  [...data.history]
-    .reverse()
-    .forEach(item => {
-
-      const div =
-        document.createElement("div");
-
-      div.className =
-        "history-item";
-
-      div.innerHTML =
-        `
-        <div class="history-number">
-          ${item.number}
-        </div>
-        <div>
-          ${formatDate(item.date)}
-        </div>
-        `;
-
-      history.appendChild(div);
-
-    });
-
-}
-
-function foundNumber(){
-
-  data.history.push({
-    number:data.current,
-    date:new Date().toISOString()
-  });
-
-  data.current++;
-
-  save();
-  render();
-}
-
-function undoLast(){
-
-  if(data.history.length === 0){
-    return;
-  }
-
-  const last =
-    data.history.pop();
-
-  data.current =
-    last.number;
-
-  save();
-  render();
-}
-
-function createSeedData() {
-
-  const number =
-    Number(
-      document.getElementById("seedNumber").value
-    );
-
-  const date =
-    document.getElementById("seedDate").value;
-
-  if(!number || !date){
-    alert("番号と日付を入力してください");
-    return;
-  }
-
-  if(!confirm("現在の履歴を上書きしますか？")){
-    return;
-  }
-
-  data.current = number + 1;
-
-  data.history = [
-    {
-      number: number,
-      date: new Date(date).toISOString()
+    if (!data) {
+        data = {
+            current: 49,
+            targetStartDate: new Date().toISOString(),
+            history: []
+        };
+        save();
     }
-  ];
 
-  save();
-  render();
+    function save() {
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(data)
+        );
+    }
 
-  alert("初期データを設定しました");
-}
+    function formatTarget(n) {
+        return String(n).padStart(4, "*");
+    }
+
+    function formatDate(d) {
+
+        return new Date(d)
+            .toLocaleDateString(
+                "ja-JP",
+                {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit"
+                }
+            );
+
+    }
+
+    function render(){
+
+        document.getElementById("target").textContent =
+            formatTarget(data.current);
+
+        document.getElementById("progress").textContent =
+            data.current + " / 9999";
+
+        if(data.history.length > 0){
+
+            const last =
+                data.history[data.history.length - 1];
+
+            const start =
+                new Date(last.date);
+
+            const today =
+                new Date();
+
+            const days =
+                Math.floor(
+                    (today - start) /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            document.getElementById("elapsed")
+                .textContent =
+                `探索 ${days} 日目`;
+
+        } else {
+
+            document.getElementById("elapsed")
+                .textContent =
+                "";
+
+        }
+
+        const history =
+            document.getElementById("history");
+
+        history.innerHTML = "";
+
+        for(
+            let i = data.history.length - 1;
+            i >= 0;
+            i--
+        ){
+
+            const item = data.history[i];
+
+            let durationText = "";
+
+            if(i > 0){
+
+                const currentDate =
+                    new Date(item.date);
+
+                const previousDate =
+                    new Date(
+                        data.history[i - 1].date
+                    );
+
+                const days =
+                    Math.floor(
+                        (currentDate - previousDate) /
+                        (1000 * 60 * 60 * 24)
+                    );
+
+                durationText =
+                    ` ★${days}日`;
+            }
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "history-item";
+
+            div.innerHTML =
+                `
+      <div class="history-number">
+        ${item.number}
+        <span>
+          ${formatDate(item.date)}
+          ${durationText}
+        </span>
+      </div>
+      `;
+
+            history.appendChild(div);
+
+        }
+
+    }
+    function foundNumber() {
+
+        data.history.push({
+            number: data.current,
+            date: new Date().toISOString()
+        });
+
+        data.current++;
+
+        save();
+        render();
+    }
+
+    function undoLast() {
+
+        if (data.history.length === 0) {
+            return;
+        }
+
+        const last =
+            data.history.pop();
+
+        data.current =
+            last.number;
+
+        save();
+        render();
+    }
+
+    function createSeedData() {
+
+        const number =
+            Number(
+                document.getElementById("seedNumber").value
+            );
+
+        const date =
+            document.getElementById("seedDate").value;
+
+        if (!number || !date) {
+            alert("番号と日付を入力してください");
+            return;
+        }
+
+        if (!confirm("現在の履歴を上書きしますか？")) {
+            return;
+        }
+
+        data.current = number + 1;
+
+        data.history = [
+            {
+                number: number,
+                date: new Date(date).toISOString()
+            }
+        ];
+
+        save();
+        render();
+
+        alert("初期データを設定しました");
+    }
 
 
-
-render();
+    render();
 
 </script>
 
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js");
-}
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./service-worker.js");
+    }
 </script>
 
 </body>
