@@ -246,6 +246,34 @@
     <details class="card settings-card">
 
         <summary>
+            💾 バックアップ・復元
+        </summary>
+
+        <br>
+
+        <button class="setup" onclick="exportData()">
+            💾 JSONを書き出し
+        </button>
+
+        <br><br>
+
+        <input
+                type="file"
+                id="importFile"
+                accept=".json"
+                onchange="importData(event)"
+        >
+
+        <br><br>
+
+        <button class="setup" onclick="shareData()">
+            📤 JSONを共有
+        </button>
+    </details>
+
+    <details class="card settings-card">
+
+        <summary>
             ⚙️ 初期データ設定
         </summary>
 
@@ -471,9 +499,146 @@
         alert("初期データを設定しました");
     }
 
+    function exportData(){
+
+        const backup = {
+            exportedAt: new Date().toISOString(),
+            data: data
+        };
+
+        const blob = new Blob(
+            [
+                JSON.stringify(
+                    backup,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:"application/json"
+            }
+        );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const a =
+            document.createElement("a");
+
+        const today =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+
+        a.href = url;
+
+        a.download =
+            `number-quest-${today}.json`;
+
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+    }
+
+    function importData(event){
+
+        const file =
+            event.target.files[0];
+
+        if(!file){
+            return;
+        }
+
+        const reader =
+            new FileReader();
+
+        reader.onload = function(e){
+
+            try{
+
+                const backup =
+                    JSON.parse(
+                        e.target.result
+                    );
+
+                if(!backup.data){
+                    throw new Error();
+                }
+
+                if(
+                    !confirm(
+                        "現在のデータを上書きしますか？"
+                    )
+                ){
+                    return;
+                }
+
+                data = backup.data;
+
+                save();
+                render();
+
+                alert(
+                    "復元しました"
+                );
+
+            }catch(err){
+
+                alert(
+                    "バックアップファイルを読み込めません"
+                );
+
+            }
+
+        };
+
+        reader.readAsText(file);
+
+    }
+
+    async function shareData(){
+
+        const backup = {
+            exportedAt: new Date().toISOString(),
+            data: data
+        };
+
+        const json =
+            JSON.stringify(
+                backup,
+                null,
+                2
+            );
+
+        const file =
+            new File(
+                [json],
+                "number-quest-backup.json",
+                {
+                    type: "application/json"
+                }
+            );
+
+        try {
+
+            await navigator.share({
+                title: "ナンバークエスト バックアップ",
+                files: [file]
+            });
+
+        } catch(e) {
+
+            console.log(
+                "共有がキャンセルされました"
+            );
+
+        }
+
+    }
 
     render();
-
+    
 </script>
 
 <script>
