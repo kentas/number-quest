@@ -613,7 +613,7 @@
         );
 
 
-        
+
         const backup = {
             exportedAt: new Date().toISOString(),
             data: data
@@ -640,6 +640,12 @@
                 }
             );
 
+        alert(
+            navigator.canShare({
+                files:[file]
+            })
+        );
+        
         try {
 
             await navigator.share({
