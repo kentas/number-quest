@@ -645,8 +645,9 @@
                 files:[file]
             })
         );
-        
+
         try {
+            alert("share start");
 
             await navigator.share({
                 title: "ナンバークエスト バックアップ",
@@ -655,8 +656,9 @@
 
         } catch(e) {
 
-            console.log(
-                "共有がキャンセルされました"
+            alert(
+                e.name + "\n" +
+                e.message
             );
 
         }
