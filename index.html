@@ -260,7 +260,9 @@
         <button class="setup" onclick="shareData()">
             📤 JSONを共有
         </button>
-
+        <button onclick="shareTest()">
+            共有テスト
+        </button>
         <br><br>
 
         <input
@@ -664,6 +666,27 @@
         }
 
     }
+
+    async function shareTest(){
+
+        try {
+
+            await navigator.share({
+                title:"テスト",
+                text:"ナンバークエスト"
+            });
+
+        } catch(e) {
+
+            alert(
+                e.name + "\n" + e.message
+            );
+
+        }
+
+    }
+
+
 
     render();
 
