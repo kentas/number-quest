@@ -205,7 +205,7 @@
 <div class="container">
 
     <h1>🚗 ナンバークエスト</h1>
-    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.0</div>
+    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.1</div>
 
     <div class="card">
         <div class="plate">
@@ -609,54 +609,38 @@
 
     async function shareData(){
 
-        alert(
-            "share=" + !!navigator.share +
-            "\ncanShare=" + !!navigator.canShare
-        );
+        try{
 
+            const backup = {
+                exportedAt: new Date().toISOString(),
+                data: data
+            };
 
+            const today =
+                new Date()
+                    .toISOString()
+                    .split("T")[0];
 
-        const backup = {
-            exportedAt: new Date().toISOString(),
-            data: data
-        };
-
-        const json =
-            JSON.stringify(
-                backup,
-                null,
-                2
-            );
-
-        const today =
-            new Date()
-                .toISOString()
-                .split("T")[0];
-
-        const file =
-            new File(
-                [json],
+            const file = new File(
+                [
+                    JSON.stringify(
+                        backup,
+                        null,
+                        2
+                    )
+                ],
                 `number-quest-${today}.json`,
                 {
                     type:"application/json"
                 }
             );
 
-        alert(
-            navigator.canShare({
-                files:[file]
-            })
-        );
-
-        try {
-            alert("share start");
-
             await navigator.share({
-                title: "ナンバークエスト バックアップ",
-                files: [file]
+                title:"ナンバークエスト バックアップ",
+                files:[file]
             });
 
-        } catch(e) {
+        }catch(e){
 
             alert(
                 e.name + "\n" +
@@ -664,35 +648,8 @@
             );
 
         }
-
     }
 
-    async function shareTest(){
-
-            try{
-
-                const file = new File(
-                    ["test"],
-                    "test.txt",
-                    {
-                        type:"text/plain"
-                    }
-                );
-
-                await navigator.share({
-                    files:[file]
-                });
-
-            }catch(e){
-
-                alert(
-                    e.name + "\n" +
-                    e.message
-                );
-
-            }
-
-    }
 
 
 
