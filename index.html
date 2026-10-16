@@ -86,6 +86,10 @@
             background: var(--orange);
         }
 
+        .setup{
+            background:#2563eb;
+        }
+
         button:active {
             transform: scale(0.98);
         }
@@ -123,14 +127,17 @@
             background: #ffffff;
             color: #000000;
 
-            width: 380px;
-            margin: 20px auto;
-            padding: 16px;
+            width: 100%;
+            max-width: 380px;
 
-            border: 1px solid #333;
+            margin: 20px auto;
+            padding: 12px 16px 24px 16px;
+
+            border: 3px solid #333;
             border-radius: 12px;
 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            box-shadow:
+                    0 4px 12px rgba(0,0,0,0.4);
         }
 
         .plate-top {
@@ -146,7 +153,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
+            gap: 24px;
         }
 
         .hiragana {
@@ -159,10 +166,12 @@
             color: #0a7a2f;
             text-align: center;
             font-family: monospace;
-            font-size: 5rem;
+
+            font-size: clamp(3rem, 10vw, 5rem);
+
             font-weight: 900;
-            letter-spacing: 0.3em;
-            margin: 25px 0;
+            letter-spacing: 0.28em;
+            margin: 0;
         }
 
         .history-number{
@@ -177,6 +186,17 @@
         .history-number span{
             font-size:0.9rem;
             color:#cbd5e1;
+        }
+
+        .settings-card summary{
+            cursor:pointer;
+            font-size:1.2rem;
+            font-weight:bold;
+            user-select:none;
+        }
+
+        .settings-card[open] summary{
+            margin-bottom:15px;
         }
     </style>
 </head>
@@ -223,11 +243,16 @@
         <div id="history"></div>
     </div>
 
-    <div class="card">
-        <h2>⚙️ 初期データ設定</h2>
+    <details class="card settings-card">
+
+        <summary>
+            ⚙️ 初期データ設定
+        </summary>
+
+        <br>
 
         <label>最後に見つけた番号</label>
-        <input id="seedNumber" max="9999" min="1" type="number">
+        <input id="seedNumber" type="number" min="1" max="9999">
 
         <br><br>
 
@@ -236,10 +261,11 @@
 
         <br><br>
 
-        <button onclick="createSeedData()">
-            初期データ作成
+        <button class="setup" onclick="createSeedData()">
+            💾 初期データ作成
         </button>
-    </div>
+
+    </details>
 
     <div class="footer">
         ブラウザ内に自動保存されます
@@ -426,7 +452,7 @@
             return;
         }
 
-        if (!confirm("現在の履歴を上書きしますか？")) {
+        if (!confirm("現在の履歴をすべて削除して初期データを設定します。よろしいですか？")) {
             return;
         }
 
