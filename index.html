@@ -205,7 +205,7 @@
 <div class="container">
 
     <h1>🚗 ナンバークエスト</h1>
-    <div class="subtitle">犬の散歩でナンバー探索</div>
+    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.0</div>
 
     <div class="card">
         <div class="plate">
@@ -669,20 +669,28 @@
 
     async function shareTest(){
 
-        try {
+            try{
 
-            await navigator.share({
-                title:"テスト",
-                text:"ナンバークエスト"
-            });
+                const file = new File(
+                    ["test"],
+                    "test.txt",
+                    {
+                        type:"text/plain"
+                    }
+                );
 
-        } catch(e) {
+                await navigator.share({
+                    files:[file]
+                });
 
-            alert(
-                e.name + "\n" + e.message
-            );
+            }catch(e){
 
-        }
+                alert(
+                    e.name + "\n" +
+                    e.message
+                );
+
+            }
 
     }
 
