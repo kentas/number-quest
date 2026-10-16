@@ -607,6 +607,13 @@
 
     async function shareData(){
 
+        alert(
+            "share=" + !!navigator.share +
+            "\ncanShare=" + !!navigator.canShare
+        );
+
+
+        
         const backup = {
             exportedAt: new Date().toISOString(),
             data: data
