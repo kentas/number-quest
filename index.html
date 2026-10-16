@@ -106,6 +106,14 @@ button:active{
   color:#64748b;
   font-size:.9rem;
 }
+
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  font-size:1rem;
+}
 </style>
 </head>
 <body>
@@ -120,6 +128,8 @@ button:active{
     <div class="target" id="target"></div>
 
     <div class="progress" id="progress"></div>
+    
+    <div class="progress" id="elapsed"></div>
 
     <button class="found" onclick="foundNumber()">
       ✅ 発見した！
@@ -129,6 +139,23 @@ button:active{
       ↩️ 間違えた！
     </button>
 
+  </div>
+  <div class="card">
+    <h2>⚙️ 設定</h2>
+
+    <label>現在の番号</label>
+    <input id="currentInput" type="number" min="1" max="9999">
+
+    <br><br>
+
+    <label>探索開始日</label>
+    <input id="startDateInput" type="date">
+
+    <br><br>
+
+    <button onclick="saveSettings()">
+      💾 設定を保存
+    </button>
   </div>
 
   <div class="card">
@@ -152,6 +179,7 @@ let data =
 if(!data){
   data = {
     current:49,
+    targetStartDate:new Date().toISOString(),
     history:[]
   };
   save();
@@ -195,6 +223,21 @@ function formatDate(d){
 }
 
 function render(){
+  const start =
+    new Date(data.targetStartDate);
+
+  const now =
+    new Date();
+
+  const days =
+    Math.floor(
+      (now - start) /
+      (1000 * 60 * 60 * 24)
+    );
+
+  document.getElementById("elapsed")
+    .textContent =
+    `探索開始から ${days} 日`;
 
   document.getElementById("target").textContent =
     formatTarget(data.current);
@@ -230,6 +273,16 @@ function render(){
       history.appendChild(div);
     });
 
+  document.getElementById(
+    "currentInput"
+  ).value = data.current;
+
+  document.getElementById(
+    "startDateInput"
+  ).value =
+    data.targetStartDate
+      .substring(0,10);
+
 }
 
 function foundNumber(){
@@ -240,6 +293,9 @@ function foundNumber(){
   });
 
   data.current++;
+
+  data.targetStartDate =
+    new Date().toISOString();
 
   save();
   render();
@@ -256,6 +312,23 @@ function undoLast(){
 
   data.current =
     last.number;
+
+  save();
+  render();
+}
+
+function saveSettings(){
+
+  data.current = Number(
+    document.getElementById(
+      "currentInput"
+    ).value
+  );
+
+  data.targetStartDate =
+    document.getElementById(
+      "startDateInput"
+    ).value;
 
   save();
   render();
