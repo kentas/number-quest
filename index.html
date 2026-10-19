@@ -252,12 +252,12 @@
         </button>
 
         <button
-                id="skipSpecial"
+                id="skipButton"
                 class="undo"
                 style="display:none;"
-                onclick="skipSpecial()">
+                onclick="skipCurrent()">
 
-            ⏭️ 欠番としてスキップ
+            ⏭️ スキップする
 
         </button>
     </div>
@@ -429,9 +429,7 @@
 
         }
 
-        document.getElementById("trivia")
-            .textContent =
-            getTrivia(data.current);
+
 
         const history =
             document.getElementById("history");
@@ -464,10 +462,32 @@
                         (currentDate - previousDate) /
                         (1000 * 60 * 60 * 24)
                     );
+                
+                if(item.skipped){
 
-                durationText =
-                    ` ★${days}日 ${getTitle(days)}`;
+                    durationText =
+                        " ⏭️スキップ";
 
+                }else if(i > 0){
+
+                    const currentDate =
+                        new Date(item.date);
+
+                    const previousDate =
+                        new Date(
+                            data.history[i - 1].date
+                        );
+
+                    const days =
+                        Math.floor(
+                            (currentDate - previousDate) /
+                            (1000 * 60 * 60 * 24)
+                        );
+
+                    durationText =
+                        ` ★${days}日 ${getTitle(days)}`;
+
+                }
             }
 
             const div =
@@ -491,8 +511,28 @@
 
         }
 
-        // ===== 欠番コレクション =====
 
+        // ===== トリビア =====
+        document.getElementById("trivia")
+            .textContent =
+            getTrivia(data.current);
+
+
+        // ===== スキップボタン =====
+        const skipButton =
+            document.getElementById(
+                "skipButton"
+            );
+
+        skipButton.style.display =
+            (
+                data.current === 42 ||
+                data.current === 49
+            )
+                ? "block"
+                : "none";
+
+        // ===== 欠番コレクション =====
         const special42Button =
             document.getElementById(
                 "special42Button"
@@ -553,6 +593,29 @@
 
         save();
         render();
+    }
+
+    function skipCurrent(){
+
+        if(
+            !confirm(
+                `${data.current} をスキップしますか？`
+            )
+        ){
+            return;
+        }
+
+        data.history.push({
+            number: data.current,
+            date: new Date().toISOString(),
+            skipped: true
+        });
+
+        data.current++;
+
+        save();
+        render();
+
     }
 
     function undoLast() {
@@ -805,6 +868,7 @@
         );
 
     }
+
 
     render();
 
