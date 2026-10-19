@@ -66,6 +66,13 @@
             color: #facc15;
         }
 
+        #trivia{
+            margin-top:10px;
+            color:#facc15;
+            font-size:0.95rem;
+            line-height:1.4;
+        }
+
         button {
             width: 100%;
             border: none;
@@ -225,8 +232,8 @@
     <div class="card">
 
         <div class="progress" id="progress"></div>
-
         <div class="progress" id="elapsed"></div>
+        <div class="progress" id="trivia"></div>
 
         <button class="found" onclick="foundNumber()">
             ✅ 発見した！
@@ -373,6 +380,10 @@
 
         }
 
+        document.getElementById("trivia")
+            .textContent =
+            getTrivia(data.current);
+        
         const history =
             document.getElementById("history");
 
@@ -622,10 +633,24 @@
         }
 
         if(days === 49){
-            return "🚗✨伝説の49✨";
+            return "🚗✨欠番ハンター49✨";
         }
 
         return "🌟神話級";
+
+    }
+
+    function getTrivia(number){
+
+        if(number === 42){
+            return "💡 42 は欠番扱いとされる番号です";
+        }
+
+        if(number === 49){
+            return "💡 49 は欠番扱いとされる番号です";
+        }
+
+        return "";
 
     }
 
