@@ -212,7 +212,7 @@
 <div class="container">
 
     <h1>🚗 ナンバークエスト</h1>
-    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.0</div>
+    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.1</div>
 
     <div class="card">
         <div class="plate">
@@ -383,7 +383,7 @@
         document.getElementById("trivia")
             .textContent =
             getTrivia(data.current);
-        
+
         const history =
             document.getElementById("history");
 
@@ -643,11 +643,11 @@
     function getTrivia(number){
 
         if(number === 42){
-            return "💡 42 は欠番扱いとされる番号です";
+            return "⚠ ボス出現中: 42は欠番扱いとされる難関番号です";
         }
 
         if(number === 49){
-            return "💡 49 は欠番扱いとされる番号です";
+            return "⚠ ボス出現中: 49は欠番扱いとされる難関番号です";
         }
 
         return "";
