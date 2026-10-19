@@ -205,6 +205,14 @@
         .settings-card[open] summary{
             margin-bottom:15px;
         }
+
+        .special-found{
+            background:#16a34a;
+        }
+
+        .special-not-found{
+            background:#475569;
+        }
     </style>
 </head>
 <body>
@@ -212,7 +220,7 @@
 <div class="container">
 
     <h1>🚗 ナンバークエスト</h1>
-    <div class="subtitle">犬の散歩でナンバー探索 ver 1.0.1</div>
+    <div class="subtitle">犬の散歩でナンバー探索 ver 1.1.0</div>
 
     <div class="card">
         <div class="plate">
@@ -243,11 +251,36 @@
             ↩️ 間違えた！
         </button>
 
+        <button
+                id="skipSpecial"
+                class="undo"
+                style="display:none;"
+                onclick="skipSpecial()">
+
+            ⏭️ 欠番としてスキップ
+
+        </button>
     </div>
 
     <div class="card">
         <h2>発見履歴</h2>
         <div id="history"></div>
+    </div>
+
+    <div class="card">
+
+        <h2>🏅 欠番コレクション</h2>
+
+        <button class="setup"
+                onclick="toggleSpecial(42)"
+                id="special42Button">
+        </button>
+
+        <button class="setup"
+                onclick="toggleSpecial(49)"
+                id="special49Button">
+        </button>
+
     </div>
 
     <details class="card settings-card">
@@ -312,9 +345,24 @@
     if (!data) {
         data = {
             current: 49,
-            targetStartDate: new Date().toISOString(),
-            history: []
+            history: [],
+            specials: {
+                42: null,
+                49: null
+            }
         };
+        save();
+    }
+
+    /*
+     * 古いバージョンのデータを移行
+    */
+    if (!data.specials) {
+        data.specials = {
+            42: null,
+            49: null
+        };
+
         save();
     }
 
@@ -438,8 +486,36 @@
 
             history.appendChild(div);
 
-        }
 
+            const special42Button =
+                document.getElementById(
+                    "special42Button"
+                );
+
+            special42Button.textContent =
+                data.specials[42]
+                    ? `☑ 42 ${formatDate(data.specials[42])}`
+                    : "☐ 42 未発見";
+
+            special42Button.className =
+                data.specials[42]
+                    ? "setup special-found"
+                    : "setup special-not-found";
+            
+            const special49Button =
+                document.getElementById(
+                    "special49Button"
+                );
+
+            special49Button.textContent =
+                data.specials[49]
+                    ? `☑ 49 ${formatDate(data.specials[49])}`
+                    : "☐ 49 未発見";
+
+            special49Button.className =
+                data.specials[49]
+                    ? "setup special-found"
+                    : "setup special-not-found";
     }
     function foundNumber() {
 
@@ -468,6 +544,23 @@
 
         save();
         render();
+    }
+
+    function skipSpecial(){
+
+        if(
+            !confirm(
+                `${data.current}をスキップしますか？`
+            )
+        ){
+            return;
+        }
+
+        data.current++;
+
+        save();
+        render();
+
     }
 
     function createSeedData() {
@@ -642,19 +735,40 @@
 
     function getTrivia(number){
 
-        if(number === 42 || number === 49){
+        if (number === 42) {
+            return "💡 下2桁42は通常交付では欠番として扱われます。希望ナンバーでは取得できます。";
+        }
 
-            return `
-💡 下2桁「42」「49」は
-通常交付では欠番として扱われます。
-そのため遭遇しにくい可能性があります。
-
-希望ナンバーでは取得可能です。
-`;
-
+        if (number === 49) {
+            return "💡 下2桁49は通常交付では欠番として扱われます。希望ナンバーでは取得できます。";
         }
 
         return "";
+    }
+
+    function toggleSpecial(number){
+
+        if(data.specials[number]){
+
+            if(
+                !confirm(
+                    `${number}の発見記録を削除しますか？`
+                )
+            ){
+                return;
+            }
+
+            data.specials[number] = null;
+
+        }else{
+
+            data.specials[number] =
+                new Date().toISOString();
+
+        }
+
+        save();
+        render();
 
     }
 
