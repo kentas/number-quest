@@ -271,6 +271,8 @@
 
         <h2>🏅 欠番コレクション</h2>
 
+        <h1 id="specialTitle"></h1>
+
         <button class="setup"
                 onclick="toggleSpecial(42)"
                 id="special42Button">
@@ -280,7 +282,6 @@
                 onclick="toggleSpecial(49)"
                 id="special49Button">
         </button>
-
     </div>
 
     <details class="card settings-card">
@@ -443,7 +444,8 @@
             i--
         ){
 
-            const item = data.history[i];
+            const item =
+                data.history[i];
 
             let durationText = "";
 
@@ -465,6 +467,7 @@
 
                 durationText =
                     ` ★${days}日 ${getTitle(days)}`;
+
             }
 
             const div =
@@ -475,22 +478,27 @@
 
             div.innerHTML =
                 `
-      <div class="history-number">
-        ${item.number}
-        <span>
-          ${formatDate(item.date)}
-          ${durationText}
-        </span>
-      </div>
-      `;
+            <div class="history-number">
+                ${item.number}
+                <span>
+                    ${formatDate(item.date)}
+                    ${durationText}
+                </span>
+            </div>
+            `;
 
             history.appendChild(div);
 
+        }
 
-            const special42Button =
-                document.getElementById(
-                    "special42Button"
-                );
+        // ===== 欠番コレクション =====
+
+        const special42Button =
+            document.getElementById(
+                "special42Button"
+            );
+
+        if(special42Button){
 
             special42Button.textContent =
                 data.specials[42]
@@ -501,11 +509,15 @@
                 data.specials[42]
                     ? "setup special-found"
                     : "setup special-not-found";
-            
-            const special49Button =
-                document.getElementById(
-                    "special49Button"
-                );
+
+        }
+
+        const special49Button =
+            document.getElementById(
+                "special49Button"
+            );
+
+        if(special49Button){
 
             special49Button.textContent =
                 data.specials[49]
@@ -516,7 +528,20 @@
                 data.specials[49]
                     ? "setup special-found"
                     : "setup special-not-found";
+
+        }
+
+        document.getElementById(
+            "specialTitle"
+        ).textContent =
+            (
+                data.specials[42] &&
+                data.specials[49]
+            )
+                ? "🏆 欠番ハンター"
+                : "";
     }
+
     function foundNumber() {
 
         data.history.push({
@@ -769,6 +794,15 @@
 
         save();
         render();
+
+    }
+
+    function hasMissingHunter(){
+
+        return (
+            data.specials[42] &&
+            data.specials[49]
+        );
 
     }
 
