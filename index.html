@@ -405,7 +405,7 @@
                     );
 
                 durationText =
-                    ` ★${days}日`;
+                    ` ★${days}日 ${getTitle(days)}`;
             }
 
             const div =
@@ -596,6 +596,36 @@
         };
 
         reader.readAsText(file);
+
+    }
+
+    function getTitle(days){
+
+        if(days === 0){
+            return "⚡即発見";
+        }
+
+        if(days <= 2){
+            return "🐕散歩の友";
+        }
+
+        if(days <= 6){
+            return "🏅難所";
+        }
+
+        if(days <= 13){
+            return "👑伝説";
+        }
+
+        if(days <= 29){
+            return "💀都市伝説";
+        }
+
+        if(days === 49){
+            return "🚗✨伝説の49✨";
+        }
+
+        return "🌟神話級";
 
     }
 
